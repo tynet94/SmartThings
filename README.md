@@ -6,10 +6,11 @@ Objectives of Cloud Beta:
 
     1.  Verify that all devices install appropriatly.  Open:  HS110, LB100. NEED USER INPUT!
     2.  Determine actual Token life-span (done on my local copy) and update as required.
-    3.  COMPLETE - Refine auto-get-token to account for failures (wrong password mainly).
-    4.  Verify Energy Monitor functions.  Open: HS110, LB110.  NEED USER INPUT!
-    5.  Capture miscellaneous errors.  NEED USER INPUT!
-    6.  Update device interface user documentation to match Cloud version.
+    3.  Move device to cloud communications to device handlers.
+    4.  COMPLETE - Refine auto-get-token to account for failures (wrong password mainly).
+    5.  Verify Energy Monitor functions.  Open: HS110, LB110.  NEED USER INPUT!
+    6.  Capture miscellaneous errors.  NEED USER INPUT!
+    7.  Update device interface user documentation to match Cloud version.
 
 # Cloud-Based TP-Link Bulb, Plug, and Switch SmartThing Integration
 
