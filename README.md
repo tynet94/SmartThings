@@ -1,4 +1,5 @@
 <img src="https://github.com/DaveGut/Cloud-Based_TP-Link-to-SmartThings-Integration/blob/master/FamilyPic.png" align="right"/>
+
 # Cloud-Based TP-Link Bulb, Plug, and Switch SmartThing Integration
 
 Two versions of TP-Link to Smart Things Integraion now exist:
