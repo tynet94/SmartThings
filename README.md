@@ -38,7 +38,13 @@ Caveate:  The author is not associated with the company TP-Link except as an own
 
 <img src="https://github.com/DaveGut/Cloud-Based_TP-Link-to-SmartThings-Integration/blob/master/FamilyPic.png" align="center"/>
 
-TP-Link Devices Supported:
+# Installation
+Installation instruction can be found:
+
+    a.  Top-level in the document 'Cloud TP-Link to SmartThing Installation.pdf'.
+    b.  In the README.md file in the 'Service Manager' and 'Device Handlers' folders.
+
+# TP-Link Devices Supported:
 
     HS100, Hs105, HS110, HS200 - TP-Link_HS_Series.groovy
     LB100, LB110 - TP-Link_LB100_110.groovy
@@ -49,10 +55,6 @@ TP-Link Devices Supported:
     LB110 with energy monitor functions - TP-Link_LB110_Emeter.groovy
     LB120 with energy monitor functions - TP-Link_LB120_Emeter.groovy
     LB130 with energy monitor functions - TP-Link_LB130_Emeter.groovy
-
-Installation instructions can be found in the documentation folder.
-
-    New (initial): In the README.MD files in the Device Handler and Service Manager folders.
 
 Files:
 
