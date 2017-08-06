@@ -1,29 +1,36 @@
 /*
-TP-Link (unofficial) Connect Service ManagerHandler (BETA)
+(BETA) TP-Link (unofficial) Connect Service ManagerHandler
 
 Copyright 2017 Dave Gutheinz
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this 
-file except in compliance with the License. You may obtain a copy of the License at:
+Licensed under the Apache License, Version 2.0 (the "License"); you 
+may not use this file except in compliance with the License. You may 
+obtain a copy of the License at:
+
 		http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software distributed under 
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF 
-ANY KIND, either express or implied. See the License for the specific language governing 
+
+Unless required by applicable law or agreed to in writing, software 
+distributed under  the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+implied. See the License for the specific language governing 
 permissions and limitations under the License.
 
-##### Discalimer:  This Service Manager and the associated Device Handlers are in no
-way sanctioned or supported by TP-Link.  All  development is based upon open-source data
-on the TP-Link devices; primarily various users on GitHub.com.
+##### Discalimer:  This Service Manager and the associated Device 
+Handlers are in no way sanctioned or supported by TP-Link.  All  
+development is based upon open-source data on the TP-Link devices; 
+primarily various users on GitHub.com.
 
 ##### Notes #####
-1.  This Service Manager is designed to install and manage TP-Link bulbs, plugs, and
-	switches using their respective device handlers.
-3.  Please direct comments to the SmartThings community thread
+1.	This Service Manager is designed to install and manage TP-Link 
+	bulbs, plugs, and switches using their respective device handlers.
+2.	Please direct comments to the SmartThings community thread 
 	'Cloud TP-Link Device SmartThings Integration'.
 
 ##### History #####
-07-28 - Beta Release
-08-01 - Modified and tested error condition logic.  Updated on-screen messages.
+07-28	-	Beta Release
+08-01	-	Modified and tested error condition logic.  Updated on-
+		screen messages.
+08-04	-	Updated checkToken to check for expired token msg.
 */
 
 definition(
@@ -35,7 +42,7 @@ definition(
 	iconUrl: "http://ecx.images-amazon.com/images/I/51S8gO0bvZL._SL210_QL95_.png",
 	iconX2Url: "http://ecx.images-amazon.com/images/I/51S8gO0bvZL._SL210_QL95_.png",
 	iconX3Url: "http://ecx.images-amazon.com/images/I/51S8gO0bvZL._SL210_QL95_.png",
-    singleInstance: true
+	singleInstance: true
 )
 
 preferences {
@@ -54,15 +61,15 @@ def cloudLogin() {
 	setInitialStates()
 	def cloudLoginText = "If possible, open the IDE and select Live Logging.  THEN, " +
 		"enter your Username and Password for TP-Link (same as Kasa app) and the "+
-        "action you want to complete.  Your current token:\n\r\n\r${state.TpLinkToken}" +
-        "\n\r\n\rAvailable actions:\n\r" +
-        "   Initial Install: Obtains token and adds devices.\n\r" +
-        "   Add Devices: Only add devices.\n\r" +
-        "   Update Token:  Updates the token.\n\r"
+		"action you want to complete.  Your current token:\n\r\n\r${state.TpLinkToken}" +
+		"\n\r\n\rAvailable actions:\n\r" +
+		"   Initial Install: Obtains token and adds devices.\n\r" +
+		"   Add Devices: Only add devices.\n\r" +
+		"   Update Token:  Updates the token.\n\r"
 	def errorMsg = ""
 	if (state.currentError != null){
 		errorMsg = "Error communicating with cloud:\n\r\n\r${state.currentError}" +
-        	"\n\r\n\rPlease resolve the error and try again.\n\r\n\r"
+			"\n\r\n\rPlease resolve the error and try again.\n\r\n\r"
 		}
    return dynamicPage(
 		name: "cloudLogin", 
@@ -97,41 +104,41 @@ def cloudLogin() {
 //	----- SELECT DEVICES PAGE -----
 def selectDevices() {
 	if (updateToken != "Add Devices") {
-    	getToken()
-    }
+		getToken()
+	}
 	if (state.currentError != null || updateToken == "Update Token") {
-    	return cloudLogin()
+		return cloudLogin()
 	}
 	getDevices()
 	def devices = state.devices
 	if (state.currentError != null) {
-    	return cloudLogin()
+		return cloudLogin()
 	}
-    def errorMsg = ""
-    if (devices == [:]) {
-    	errorMsg = "There were no devices from TP-Link.  This usually means "+
-        	"that all devices are in 'Local Control Only'.  Correct then " +
-            "rerun.\n\r\n\r"
-        }
+	def errorMsg = ""
+	if (devices == [:]) {
+		errorMsg = "There were no devices from TP-Link.  This usually means "+
+			"that all devices are in 'Local Control Only'.  Correct then " +
+			"rerun.\n\r\n\r"
+		}
 	def newDevices = [:]
 	devices.each {
 		def isChild = getChildDevice(it.value.deviceMac)
 		if (!isChild) {
 			newDevices["${it.value.deviceMac}"] = "${it.value.alias} model ${it.value.deviceModel}"
-        }
+		}
 	}
-    if (newDevices == [:]) {
-    	errorMsg = "No new devices to add.  Are you sure they are in Remote " +
-        	"Control Mode?\n\r\n\r"
-        }
-    settings.selectedDevices = null
+	if (newDevices == [:]) {
+		errorMsg = "No new devices to add.  Are you sure they are in Remote " +
+			"Control Mode?\n\r\n\r"
+		}
+	settings.selectedDevices = null
 	def TPLinkDevicesMsg = "TP-Link Token is ${state.TpLinkToken}\n\r" +
 		"Devices that have not been previously installed and are not in 'Local " +
-        "WiFi control only' will appear below.  TAP below to see the list of " +
-        "TP-Link devices available select the ones you want to connect to " +
-        "SmartThings.\n\r\n\rPress DONE when you have selected the devices you " +
-        "wish to add, thenpress DONE again to install the devices.  Press   <   " +
-        "to return to the previous page."
+		"WiFi control only' will appear below.  TAP below to see the list of " +
+		"TP-Link devices available select the ones you want to connect to " +
+		"SmartThings.\n\r\n\rPress DONE when you have selected the devices you " +
+		"wish to add, thenpress DONE again to install the devices.  Press   <   " +
+		"to return to the previous page."
 	return dynamicPage(
 		name: "selectDevices", 
 		title: "Select Your TP-Link Devices", 
@@ -150,7 +157,7 @@ def selectDevices() {
 
 def getDevices() {
 	def currentDevices = getDeviceData()
-    state.devices = [:]
+	state.devices = [:]
 	def devices = state.devices
 	currentDevices.each {
 		def device = [:]
@@ -202,7 +209,6 @@ def addDevices() {
 //	----- GET A NEW TOKEN FROM CLOUD -----
 def getToken() {
 	state.currentError = null
-
 	def hub = location.hubs[0]
 	def cmdBody = [
 		method: "login",
@@ -213,7 +219,6 @@ def getToken() {
 			terminalUUID: "${hub.id}"
 		]
 	]
-    log.info "Sending token request with userName: ${userName} and userPassword:  ${userPassword}"
 	def getTokenParams = [
 		uri: "https://wap.tplinkcloud.com",
 		requestContentType: 'application/json',
@@ -225,15 +230,15 @@ def getToken() {
 		if (resp.status == 200 && resp.data.error_code == 0) {
 			state.TpLinkToken = resp.data.result.token
 			log.info "TpLinkToken updated to ${state.TpLinkToken}"
-	        sendEvent(name: "TokenUpdate", value: "getToken Successful")
+			sendEvent(name: "TokenUpdate", "tokenUpdate Successful.")
 		} else if (resp.status != 200) {
 			state.currentError = resp.statusLine
 			log.error "Error in getToken: ${state.currentError}"
-	        sendEvent(name: "TokenUpdate", value: state.currentError)
+			sendEvent(name: "TokenUpdate", value: state.currentError)
 		} else if (resp.data.error_code != 0) {
 			state.currentError = resp.data
 			log.error "Error in getToken: ${state.currentError}"
-	        sendEvent(name: "TokenUpdate", value: "getToken Failure")
+			sendEvent(name: "TokenUpdate", value: state.currentError)
 		}
 	}
 }
@@ -312,8 +317,8 @@ def updated() {
 def initialize() {
 	unsubscribe()
 	unschedule()
-    runEvery5Minutes(checkToken)
-    schedule("0 30 1 3/5 * ?", getToken)
+	runEvery5Minutes(checkToken)
+	schedule("0 30 1 3/5 * ?", getToken)
 	if (selectedDevices) {
 		addDevices()
 	}
@@ -321,11 +326,14 @@ def initialize() {
 
 //	----- PERIODIC CLOUD MX TASKS -----
 def checkToken() {
-	if (state.currentError != null) {
-    	sendEvent(name: "TokenUpdate", value: "Updating from checkToken")
-        log.error "checkToken attempting to update token due to error"
-        getToken()
-    }
+	log.info "Executing periodic checkToken"
+	if (state.currentError == "{error_code=-20651, msg=Token expired}") {
+		log.info "checkToken attempting to update token."
+		getToken()
+		if (state.currentError != null) { 
+			log.error "checkToken failed!"
+		}
+	}
 }
 
 //	----- CHILD CALLED TASKS -----
@@ -335,5 +343,5 @@ def removeChildDevice(alias, deviceNetworkId) {
 	} catch (Exception e) {
 		sendEvent(name: "DeviceDelete", value: "Failed to delete ${alias}")
 	}
-    sendEvent(name: "DeviceDelete", value: "${alias} deleted")
+	sendEvent(name: "DeviceDelete", value: "${alias} deleted")
 }
