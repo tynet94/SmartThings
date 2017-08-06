@@ -31,30 +31,31 @@ Installation instruction can be found:
     b.  In the README.md file in the 'Service Manager' and 'Device Handlers' folders.
 
 # Cloud Beta Updates and Objectives
-    08-02 - Updated page text and error messages in Service Manager.
-    08-02 - Created 'Cloud TP-Link to SmartThing Installation.pdf'.
+    a.  Minor update to install documents highlighting importance of 'My Locaton' steps.
+    b.  Minor (non-functional) updates to Device Handlers to match user documentation.
 
 Objectives of Cloud Beta:
 
     1.  Verify that all devices install appropriatly.  Open:  HS110, LB100. NEED USER INPUT!
     2.  Determine actual Token life-span (done on my local copy) and update as required.
-    3.  Move device to cloud communications to device handlers.
+        (after one week, still open)
+    3.  DELETE - Move device to cloud communications to device handlers.
     4.  COMPLETE - Refine auto-get-token to account for failures (wrong password mainly).
     5.  Verify Energy Monitor functions.  Open: HS110, LB110.  NEED USER INPUT!
     6.  Capture miscellaneous errors.  NEED USER INPUT!
-    7.  Update device interface user documentation to match Cloud version.
+    7.  COMPLETE - Update device interface user documentation to match Cloud version.
 
 # TP-Link Devices Supported:
 
-    HS100, Hs105, HS110, HS200 - TP-Link_HS_Series.groovy
-    LB100, LB110 - TP-Link_LB100_110.groovy
-    LB120 - TP-Link_LB120.groovy
-    LB130 - TP-Link_LB130.groovy
+    HS100, Hs105, HS110, HS200 - (Cloud)TP-Link_HS_Series.groovy
+    LB100, LB110 - (Cloud)TP-Link_LB100_110.groovy
+    LB120 - (Cloud)TP-Link_LB120.groovy
+    LB130 - (Cloud)TP-Link_LB130.groovy
     ENERGY MONITOR VARIANTS
-    HS110 with energy monitor functions - TP-Link_HS110_Emeter.groovy
-    LB110 with energy monitor functions - TP-Link_LB110_Emeter.groovy
-    LB120 with energy monitor functions - TP-Link_LB120_Emeter.groovy
-    LB130 with energy monitor functions - TP-Link_LB130_Emeter.groovy
+    HS110 with energy monitor functions - (Cloud)TP-Link_HS110_Emeter.groovy
+    LB110 with energy monitor functions - (Cloud)TP-Link_LB110_Emeter.groovy
+    LB120 with energy monitor functions - (Cloud)TP-Link_LB120_Emeter.groovy
+    LB130 with energy monitor functions - (Cloud)TP-Link_LB130_Emeter.groovy
 
 Files:
 
