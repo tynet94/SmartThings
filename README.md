@@ -33,6 +33,7 @@ Installation instruction can be found:
 # Cloud Beta Updates and Objectives
     a.  Minor update to install documents highlighting importance of 'My Locaton' steps.
     b.  Minor (non-functional) updates to Device Handlers to match user documentation.
+    c.  Updated 'TP-Link SmartThing Implementation' to reflect current SmartThing app interface.
 
 Objectives of Cloud Beta:
 
