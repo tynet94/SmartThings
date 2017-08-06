@@ -18,6 +18,7 @@ A.  Install the Service Manager ("TPLink Connect (unoffficial).groovy")
         c)  Log-in or follow instructions to obtain an account.
 
     2)  Select the 'My Location' Tab and select your locaton.
+    [NOTE:  YOU MUST SELECT YOUR LOCATION.  NOT DOING SO WILL CAUSE THE SERVICE MANAGER TO NOT APPEAR IN STEP 5C AND THE DEVICES TO INSTALL IN STEP 6B.]
     
     3)  Select the 'My SmartApps' Tab.
 
