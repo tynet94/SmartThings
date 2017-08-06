@@ -70,7 +70,7 @@ D.  Upgrading to Energy Monitor Function for a device
     
 # Included Files
 
-In the folder "Service Manager": TPLink Connect (unoffficial).groovy - Service Manager for installation and management of the device handlers.
+In the folder "Service Manager": (Cloud)TPLink Connect (unoffficial).groovy - Service Manager for installation and management of the device handlers.
 
 In the folder "Device Handlers":
 
