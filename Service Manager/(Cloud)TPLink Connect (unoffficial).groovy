@@ -230,7 +230,7 @@ def getToken() {
 		if (resp.status == 200 && resp.data.error_code == 0) {
 			state.TpLinkToken = resp.data.result.token
 			log.info "TpLinkToken updated to ${state.TpLinkToken}"
-			sendEvent(name: "TokenUpdate", "tokenUpdate Successful.")
+			sendEvent(name: "TokenUpdate", value: "tokenUpdate Successful.")
 		} else if (resp.status != 200) {
 			state.currentError = resp.statusLine
 			log.error "Error in getToken: ${state.currentError}"
