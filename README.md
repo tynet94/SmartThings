@@ -31,9 +31,12 @@ Installation instruction can be found:
     b.  In the README.md file in the 'Service Manager' and 'Device Handlers' folders.
 
 # Cloud Beta Updates and Objectives
-    a.  Minor update to install documents highlighting importance of 'My Locaton' steps.
-    b.  Minor (non-functional) updates to Device Handlers to match user documentation.
-    c.  Updated 'TP-Link SmartThing Implementation' to reflect current SmartThing app interface.
+    UPDATES (Dallas, Texas USA times uploaded to GitHub)
+    08-07 (0600) -  CRITICAL.  Fixed Service Manager code eliminating error causing installation crash.
+                    was only the Service Manager loaded 08-07 (1600).
+    08-06 (1600) -  Minor.  Varions fixes to error handling and messaging within Device Handlers and
+                    Service Manager.
+    08-06 (1400) -  Documentation:  Updated 'TP-Link SmartThings Implementation'
 
 Objectives of Cloud Beta:
 
