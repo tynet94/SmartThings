@@ -31,6 +31,7 @@ primarily various users on GitHub.com.
 08-01	-	Modified and tested error condition logic.  Updated on-
 		screen messages.
 08-04	-	Updated checkToken to check for expired token msg.
+08-07	-	Fixed error in Token Update that causes crash on install.
 */
 
 definition(
