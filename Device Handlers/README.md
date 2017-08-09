@@ -46,6 +46,8 @@ Note 1:  To be detected, the bulb must be set to 'remote control' in the device'
 
 Note 2:  The Service Manager will attain the token from TP-Link for you.  Do not do this yourself.
 
+[PLEASE OPEN UP 'LIVE LOGGING' AND IF AN ERROR OCCURS, PROVIDE THIS DATA TO AUTHOR WHEN REQUESTING ASSISTANTS]
+
     1)  Select "Automation" (at bottom), then the 'SmartApps' tab
     
     2)  Select '+ Add a SmartApp' at the bottom.
