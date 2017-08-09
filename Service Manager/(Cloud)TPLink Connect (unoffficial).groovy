@@ -1,14 +1,10 @@
 /*
-(BETA) TP-Link (unofficial) Connect Service ManagerHandler
-
+(BETA) TP-Link (unofficial) Connect Service Manager
 Copyright 2017 Dave Gutheinz
-
 Licensed under the Apache License, Version 2.0 (the "License"); you 
 may not use this file except in compliance with the License. You may 
 obtain a copy of the License at:
-
 		http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software 
 distributed under  the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
@@ -32,6 +28,15 @@ primarily various users on GitHub.com.
 		screen messages.
 08-04	-	Updated checkToken to check for expired token msg.
 08-07	-	Fixed error in Token Update that causes crash on install.
+08-09	-	Ch1. Added logic to limit number of times to automatically
+		update Token to three (then user must intervene).
+		Ch2.  Move nulling of current error to after successful 
+		communications.
+		Ch3.  Correct typo.
+		Ch5.  Added temp debug logging in Get Devices and Add 
+		Devices
+DEFERRED	Ch4.  Added updating apiServerUrl updating each time Add 
+		Devices is run.
 */
 
 definition(
@@ -55,6 +60,8 @@ def setInitialStates() {
 	if (!state.TpLinkToken) {state.TpLinkToken = null}
 	if (!state.devices) {state.devices = [:]}
 	if (!state.currentError) {state.currentError = null}
+//	Change 1.  Create state.errorCount
+	if (!state.errorCount) {state.errorCount = 0}
 }
 
 //	----- LOGIN PAGE -----
@@ -158,6 +165,8 @@ def selectDevices() {
 
 def getDevices() {
 	def currentDevices = getDeviceData()
+//	Change 5.  Temporary Debug.
+log.debug currentDevices
 	state.devices = [:]
 	def devices = state.devices
 	currentDevices.each {
@@ -168,6 +177,11 @@ def getDevices() {
 		device["deviceId"] = it.deviceId
 		device["appServerUrl"] = it.appServerUrl
 		devices << ["${it.deviceMac}": device]
+//	Change 4.  child command to update 'appServerUrl'
+//		def isChild = getChildDevice(it.deviceMac)
+//		if (isChild) {
+//			isChild.syncAppServerUrl(it.appServerUrl)
+//		}
 		log.info "Device ${it.alias} added to devices array"
 	}
 }
@@ -189,6 +203,8 @@ def addDevices() {
 		if (!isChild) {
 			def device = state.devices.find { it.value.deviceMac == dni }
 			def deviceModel = device.value.deviceModel.substring(0,5)
+//	Change 5.  Temporary Debug.
+log.debug "Installing ${deviceModel} with MAC ${device.value.deviceMac} and alias ${device.value.alias}"
 			addChildDevice(
 				"beta",
 				tpLinkModel["${deviceModel}"], 
@@ -202,14 +218,16 @@ def addDevices() {
 					]
 				]
 			)
-			log.info "Installed TP-Link $deviceModel with alias ${device.value.deviceAlias}"
+//	Change 3.  Typo correction to 'alias'
+			log.info "Installed TP-Link $deviceModel with alias ${device.value.alias}"
 		}
 	}
 }
 
 //	----- GET A NEW TOKEN FROM CLOUD -----
 def getToken() {
-	state.currentError = null
+//	Change 2.  Move state.currentError to after successful comms (reduces changes in state)
+//	state.currentError = null
 	def hub = location.hubs[0]
 	def cmdBody = [
 		method: "login",
@@ -232,6 +250,8 @@ def getToken() {
 			state.TpLinkToken = resp.data.result.token
 			log.info "TpLinkToken updated to ${state.TpLinkToken}"
 			sendEvent(name: "TokenUpdate", value: "tokenUpdate Successful.")
+//	Change 2.  Move state.currentError to after successful comms (reduces changes in state)
+			state.currentError = null
 		} else if (resp.status != 200) {
 			state.currentError = resp.statusLine
 			log.error "Error in getToken: ${state.currentError}"
@@ -246,7 +266,8 @@ def getToken() {
 
 //	----- GET DEVICE DATA FROM THE CLOUD -----
 def getDeviceData() {
-	state.currentError = null
+//	Change 2.  Move state.currentError to after successful comms (reduces changes in state)
+//	state.currentError = null
 	def currentDevices = ""
 	def cmdBody = [method: "getDeviceList"]
 	def getDevicesParams = [
@@ -259,6 +280,8 @@ def getDeviceData() {
 	httpPostJson(getDevicesParams) {resp ->
 		if (resp.status == 200 && resp.data.error_code == 0) {
 			currentDevices = resp.data.result.deviceList
+//	Change 2.  Move state.currentError to after successful comms (reduces changes in state)
+			state.currentError = null
 			return currentDevices
 		} else if (resp.status != 200) {
 			state.currentError = resp.statusLine
@@ -272,7 +295,8 @@ def getDeviceData() {
 
 //	----- SEND DEVICE COMMAND TO CLOUD FOR DH -----
 def sendDeviceCmd(appServerUrl, deviceId, command) {
-	state.currentError = null
+//	Change 2.  Move state.currentError to after successful comms (reduces changes in state)
+//	state.currentError = null
 	def cmdResponse = ""
 	def cmdBody = [
 		method: "passthrough",
@@ -292,14 +316,18 @@ def sendDeviceCmd(appServerUrl, deviceId, command) {
 		if (resp.status == 200 && resp.data.error_code == 0) {
 			def jsonSlurper = new groovy.json.JsonSlurper()
 			cmdResponse = jsonSlurper.parseText(resp.data.result.responseData)
+//	Change 1.  Update state.errorCount to zero on successful device comms.
+			state.errorCount = 0
+//	Change 2.  Move state.currentError to after successful comms (reduces changes in state)
+			state.currentError = null
 		} else if (resp.status != 200) {
 			state.currentError = resp.statusLine
 			cmdResponse = "ERROR: ${resp.statusLine}"
-			log.error "Error in sendCmdParams: ${state.currentError}"
+			log.error "Error in sendDeviceCmd: ${state.currentError}"
 		} else if (resp.data.error_code != 0) {
 			state.currentError = resp.data
 			cmdResponse = "ERROR: ${resp.data.msg}"
-			log.error "Error in sendCmdParams: ${state.currentError}"
+			log.error "Error in sendDeviceCmd: ${state.currentError}"
 		}
 	}
 	return cmdResponse
@@ -318,7 +346,8 @@ def updated() {
 def initialize() {
 	unsubscribe()
 	unschedule()
-	runEvery5Minutes(checkToken)
+//	Change 1,  Change name to checkError
+	runEvery5Minutes(checkError)
 	schedule("0 30 1 3/5 * ?", getToken)
 	if (selectedDevices) {
 		addDevices()
@@ -326,14 +355,22 @@ def initialize() {
 }
 
 //	----- PERIODIC CLOUD MX TASKS -----
-def checkToken() {
-	log.info "Executing periodic checkToken"
-	if (state.currentError == "{error_code=-20651, msg=Token expired}") {
-		log.info "checkToken attempting to update token."
-		getToken()
-		if (state.currentError != null) { 
-			log.error "checkToken failed!"
+//	Change 1.	Rename to checkError.  Add logic.
+def checkError() {
+	if (state.currentError != null) {
+		def errMsg = state.currentError.msg
+		if (errMsg == "Token expired" && state.errorCount < 3) {
+			state.errorCount = state.errorCount + 1
+			log.info "${errMsg} error.  Attempting to obtain new Token."
+			getToken()
+		} else {
+			log.info "checkError:  No auto-correctable errors or exceeded Token request count."
 		}
+	} else {
+		log.info "checkError:  No Errors."
+	}
+	if (state.currentError != null) { 
+		log.error "checkError residual:  ${state.currentError}"
 	}
 }
 
@@ -341,8 +378,8 @@ def checkToken() {
 def removeChildDevice(alias, deviceNetworkId) {
 	try {
 		deleteChildDevice(it.deviceNetworkId)
+		sendEvent(name: "DeviceDelete", value: "${alias} deleted")
 	} catch (Exception e) {
 		sendEvent(name: "DeviceDelete", value: "Failed to delete ${alias}")
 	}
-	sendEvent(name: "DeviceDelete", value: "${alias} deleted")
 }
