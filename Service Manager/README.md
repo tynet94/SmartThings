@@ -1,4 +1,4 @@
-# Cloud-Based TP-Link to Smart Things Integration
+# Cloud-Based TP-Link to Smart Things Integration - BETA
 
 This package is for the SmartThings integration of TP-Link bulbs and plugs through the TP-Link cloud.  Prerequisites:
 
@@ -45,6 +45,8 @@ C.  From your smart phone SmartThings application:
 Note 1:  To be detected, the bulb must be set to 'remote control' in the device's options in the Kasa App.
 
 Note 2:  The Service Manager will attain the token from TP-Link for you.  Do not do this yourself.
+
+[PLEASE OPEN UP 'LIVE LOGGING' AND IF AN ERROR OCCURS, PROVIDE THIS DATA TO AUTHOR WHEN REQUESTING ASSISTANTS]
 
     1)  Select "Automation" (at bottom), then the 'SmartApps' tab
     
