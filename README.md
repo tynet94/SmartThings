@@ -1,6 +1,6 @@
 <img src="https://github.com/DaveGut/Cloud-Based_TP-Link-to-SmartThings-Integration/blob/master/FamilyPic.png" align="right"/>
 
-# Cloud-Based TP-Link Bulb, Plug, and Switch SmartThing Integration
+# Cloud-Based TP-Link Bulb, Plug, and Switch SmartThing Integration - BETA
 
 Two versions of TP-Link to Smart Things Integraion now exist:
 
@@ -32,6 +32,9 @@ Installation instruction can be found:
 
 # Cloud Beta Updates and Objectives
     UPDATES (Dallas, Texas USA times uploaded to GitHub)
+    08-09 (0700) -  Minor.  Updated Service Manager for additional logging and limiting the automatic
+                    getToken to three times w/o user intervention.  Updated Installation Instructions
+                    to ask user to open logging and copy log if there are errors on install.
     08-07 (0600) -  CRITICAL.  Fixed Service Manager code eliminating error causing installation crash.
                     was only the Service Manager loaded 08-07 (1600).
     08-06 (1600) -  Minor.  Varions fixes to error handling and messaging within Device Handlers and
