@@ -37,6 +37,9 @@ primarily various users on GitHub.com.
 		Devices
 DEFERRED	Ch4.  Added updating apiServerUrl updating each time Add 
 		Devices is run.
+08-09	-	ERROR CORRECTION.  Corrected error in addDevices where
+		I type "LB110-LB110" instead of "LB100-LB110", causing
+		the device to not install.
 */
 
 definition(
