@@ -10,7 +10,7 @@ This package is for the SmartThings integration of TP-Link bulbs and plugs throu
 
 # INSTALLATION
 
-A.  Install the Service Manager ("TPLink Connect (unoffficial).groovy")
+A.  Install the Service Manager ("(Cloud)TPLink Connect (unoffficial).groovy")
 
     1)  Log onto the IDE
         a)  From community page, upper right side, select "COMMUNITY"
