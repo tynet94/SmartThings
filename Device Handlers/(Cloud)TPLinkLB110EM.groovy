@@ -79,6 +79,9 @@ metadata {
 			state ("default", label:"Refresh", action:"refresh.refresh", icon:"st.secondary.refresh")
 		}		 
 //	ENERGY MONITOR TO ###
+		standardTile("blankTile", "", width: 2, height: 2,  decoration: "flat") {
+			state ("", label:"")
+		}	 
 		standardTile("refreshStats", "Refresh Statistics", width: 2, height: 2,  decoration: "flat") {
 			state ("refreshStats", label:"Refresh Stats", action:"setCurrentDate", icon:"st.secondary.refresh")
 		}		 
@@ -102,8 +105,7 @@ metadata {
 		}
 //	###
 		main("switch")
-//				|-ALL--|  |--ALL--|  |-----------------------ENERGY MONITOR-------------------------------------------------------|
-		details("switch", "refresh" ,"refreshStats", "power", "weekTotal", "monthTotal", "engrToday", "weekAverage", "monthAverage")
+		details("switch", "refresh" ,"blankTile", "refreshStats", "power", "weekTotal", "monthTotal", "engrToday", "weekAverage", "monthAverage")
 	}
 }
 
