@@ -4,17 +4,17 @@
 
 Two versions of TP-Link to Smart Things Integraion now exist:
 
-a. Hub-Based TP-Link to Smart Things Integraion: The Hub-based version that requires an always on Hub device (bridge). Attributes:
-
-    Requires user-configured (PC, Android, Raspberry) Hub with node.js and server script.
-    Does not require a token captured from the TP-Link cloud.
-    Manual device installation and setting static IP addresses.
-
-b. Cloud-Based TP-Link to Smart Things Integraion: The new version (currently in Beta) that relies on the TP-Link Kasa cloud. Attributes:
+a. Cloud-Based TP-Link to Smart Things Integraion: This new version (currently in Beta) that relies on the TP-Link Kasa cloud. Attributes:
 
     Reliant on TP-Link cloud (and the continued availabilty of same).
     Must have TP-Link account.
     Simpler setup. Install Service Manager and applicable device handlers. Runs service Manager.
+
+b. Hub-Based TP-Link to Smart Things Integraion: The previous Hub-based version that requires an always on Hub device (bridge). Attributes:
+
+    Requires user-configured (PC, Android, Raspberry) Hub with node.js and server script.
+    Does not require a token captured from the TP-Link cloud.
+    Manual device installation and setting static IP addresses.
 
 # Cloud-Based Pre-requisites:
 
@@ -47,8 +47,8 @@ Objectives of Cloud Beta:
 
     1.  Verify that all devices install appropriatly.  Open:  LB110. NEED USER INPUT!
     2.  Determine actual Token life-span (done on my local copy) and update as required.
-        (after one week, still open)
-    3.  Verify Energy Monitor functions.  Open: HS110, LB110.  NEED USER INPUT!
+        (Currently 17 days.)
+    3.  Improve error handling techniques.
     4.  Capture miscellaneous errors.  NEED USER INPUT!
 
 # TP-Link Devices Supported:
