@@ -32,6 +32,9 @@ Installation instruction can be found:
 
 # Cloud Beta Updates and Objectives
     UPDATES (Dallas, Texas USA times uploaded to GitHub)
+    09-04 (0930) -  Update Service Manager
+                    a.  error checking logic expanded.
+                    b.  Automatic Token schedule to once per week. 
     08-09 (1330) -  CRITICAL.  Updated Service Manager (addDevices) to correct typo causing failure
                     to install of LB110 bulbs.
     08-09 (0700) -  Minor.  Updated Service Manager for additional logging and limiting the automatic
