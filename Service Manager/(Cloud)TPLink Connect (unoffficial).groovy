@@ -35,11 +35,13 @@ primarily various users on GitHub.com.
 		Ch3.  Correct typo.
 		Ch5.  Added temp debug logging in Get Devices and Add 
 		Devices
-DEFERRED	Ch4.  Added updating apiServerUrl updating each time Add 
-		Devices is run.
 08-09	-	ERROR CORRECTION.  Corrected error in addDevices where
 		I type "LB110-LB110" instead of "LB100-LB110", causing
 		the device to not install.
+08-23	1.	Added syncAppServerUrl to Device Handlers.
+		2.	Update appServerURL each time getDevice is executed.
+09-04	1.	Changed automatic token update: every Wednesday at 0230.
+		2.	Updated checkError processing.
 */
 
 definition(
@@ -63,7 +65,6 @@ def setInitialStates() {
 	if (!state.TpLinkToken) {state.TpLinkToken = null}
 	if (!state.devices) {state.devices = [:]}
 	if (!state.currentError) {state.currentError = null}
-//	Change 1.  Create state.errorCount
 	if (!state.errorCount) {state.errorCount = 0}
 }
 
@@ -168,8 +169,6 @@ def selectDevices() {
 
 def getDevices() {
 	def currentDevices = getDeviceData()
-//	Change 5.  Temporary Debug.
-log.debug currentDevices
 	state.devices = [:]
 	def devices = state.devices
 	currentDevices.each {
@@ -180,11 +179,10 @@ log.debug currentDevices
 		device["deviceId"] = it.deviceId
 		device["appServerUrl"] = it.appServerUrl
 		devices << ["${it.deviceMac}": device]
-//	Change 4.  child command to update 'appServerUrl'
-//		def isChild = getChildDevice(it.deviceMac)
-//		if (isChild) {
-//			isChild.syncAppServerUrl(it.appServerUrl)
-//		}
+		def isChild = getChildDevice(it.deviceMac)
+		if (isChild) {
+			isChild.syncAppServerUrl(it.appServerUrl)
+		}
 		log.info "Device ${it.alias} added to devices array"
 	}
 }
@@ -206,8 +204,6 @@ def addDevices() {
 		if (!isChild) {
 			def device = state.devices.find { it.value.deviceMac == dni }
 			def deviceModel = device.value.deviceModel.substring(0,5)
-//	Change 5.  Temporary Debug.
-log.debug "Installing ${deviceModel} with MAC ${device.value.deviceMac} and alias ${device.value.alias}"
 			addChildDevice(
 				"beta",
 				tpLinkModel["${deviceModel}"], 
@@ -221,7 +217,6 @@ log.debug "Installing ${deviceModel} with MAC ${device.value.deviceMac} and alia
 					]
 				]
 			)
-//	Change 3.  Typo correction to 'alias'
 			log.info "Installed TP-Link $deviceModel with alias ${device.value.alias}"
 		}
 	}
@@ -229,8 +224,6 @@ log.debug "Installing ${deviceModel} with MAC ${device.value.deviceMac} and alia
 
 //	----- GET A NEW TOKEN FROM CLOUD -----
 def getToken() {
-//	Change 2.  Move state.currentError to after successful comms (reduces changes in state)
-//	state.currentError = null
 	def hub = location.hubs[0]
 	def cmdBody = [
 		method: "login",
@@ -253,7 +246,6 @@ def getToken() {
 			state.TpLinkToken = resp.data.result.token
 			log.info "TpLinkToken updated to ${state.TpLinkToken}"
 			sendEvent(name: "TokenUpdate", value: "tokenUpdate Successful.")
-//	Change 2.  Move state.currentError to after successful comms (reduces changes in state)
 			state.currentError = null
 		} else if (resp.status != 200) {
 			state.currentError = resp.statusLine
@@ -269,8 +261,6 @@ def getToken() {
 
 //	----- GET DEVICE DATA FROM THE CLOUD -----
 def getDeviceData() {
-//	Change 2.  Move state.currentError to after successful comms (reduces changes in state)
-//	state.currentError = null
 	def currentDevices = ""
 	def cmdBody = [method: "getDeviceList"]
 	def getDevicesParams = [
@@ -283,7 +273,6 @@ def getDeviceData() {
 	httpPostJson(getDevicesParams) {resp ->
 		if (resp.status == 200 && resp.data.error_code == 0) {
 			currentDevices = resp.data.result.deviceList
-//	Change 2.  Move state.currentError to after successful comms (reduces changes in state)
 			state.currentError = null
 			return currentDevices
 		} else if (resp.status != 200) {
@@ -298,8 +287,6 @@ def getDeviceData() {
 
 //	----- SEND DEVICE COMMAND TO CLOUD FOR DH -----
 def sendDeviceCmd(appServerUrl, deviceId, command) {
-//	Change 2.  Move state.currentError to after successful comms (reduces changes in state)
-//	state.currentError = null
 	def cmdResponse = ""
 	def cmdBody = [
 		method: "passthrough",
@@ -319,9 +306,7 @@ def sendDeviceCmd(appServerUrl, deviceId, command) {
 		if (resp.status == 200 && resp.data.error_code == 0) {
 			def jsonSlurper = new groovy.json.JsonSlurper()
 			cmdResponse = jsonSlurper.parseText(resp.data.result.responseData)
-//	Change 1.  Update state.errorCount to zero on successful device comms.
 			state.errorCount = 0
-//	Change 2.  Move state.currentError to after successful comms (reduces changes in state)
 			state.currentError = null
 		} else if (resp.status != 200) {
 			state.currentError = resp.statusLine
@@ -349,32 +334,48 @@ def updated() {
 def initialize() {
 	unsubscribe()
 	unschedule()
-//	Change 1,  Change name to checkError
 	runEvery5Minutes(checkError)
-	schedule("0 30 1 3/5 * ?", getToken)
+	schedule("0 30 2 ? * WED", getToken)
 	if (selectedDevices) {
 		addDevices()
 	}
 }
 
 //	----- PERIODIC CLOUD MX TASKS -----
-//	Change 1.	Rename to checkError.  Add logic.
 def checkError() {
-	if (state.currentError != null) {
-		def errMsg = state.currentError.msg
-		if (errMsg == "Token expired" && state.errorCount < 3) {
-			state.errorCount = state.errorCount + 1
-			log.info "${errMsg} error.  Attempting to obtain new Token."
-			getToken()
-		} else {
-			log.info "checkError:  No auto-correctable errors or exceeded Token request count."
-		}
+//	1.	Check if there is an error (state.currentError).  If none, then exit.
+//	2.	Increment error counter.
+//	3.	Limit error correction to 5 consecutive and for "token expired"
+//	4.	Run getDevices.  Will update appServerUrl is successful.
+//	5.	If getDevices failed, run getToken then getDevices.
+//	6.	If getToken is successful, getDevices to update appServerUrl
+//	7.  If failed, exit with message and wait for next attempt
+//	8.	For non-'token expired' error, log residual error.
+	if (state.currentError == null) {
+    	log.info "TP-Link Connect did not have any set errors."
+        return
+    }
+	def errMsg = state.currentError.msg
+    log.info "Attempting to solve error: ${errMsg}"
+    state.errorCount = state.errorCount +1
+	if (errMsg == "Token expired" && state.errorCount < 6) {
+	    sendEvent (name: "ErrHandling", value: "Handle comms error attempt ${state.errorCount}")
+    	getDevices()
+        if (state.currentError == null) {
+        	log.info "getDevices successful.  apiServerUrl updated and token is good."
+            return
+        }
+        log.error "${errMsg} error while attempting getDevices.  Will attempt getToken"
+		getToken()
+        if (state.currentError == null) {
+        	log.info "getToken successful.  Token has been updated."
+        	getDevices()
+            return
+        }
 	} else {
-		log.info "checkError:  No Errors."
+		log.error "checkError:  No auto-correctable errors or exceeded Token request count."
 	}
-	if (state.currentError != null) { 
-		log.error "checkError residual:  ${state.currentError}"
-	}
+	log.error "checkError residual:  ${state.currentError}"
 }
 
 //	----- CHILD CALLED TASKS -----
