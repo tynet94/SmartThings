@@ -32,6 +32,9 @@ Installation instruction can be found:
 
 # Cloud Beta Updates and Objectives
     UPDATES (Dallas, Texas USA times uploaded to GitHub)
+    PLANNED 09-11   Convert to final version of all.  Will save existing beta files in a sub-directory.
+                    No significant changes from this Beta are planned, so reinstallation is not
+                    required.
     09-04 (0930) -  Update Service Manager
                     a.  error checking logic expanded.
                     b.  Automatic Token schedule to once per week. 
@@ -46,13 +49,7 @@ Installation instruction can be found:
                     Service Manager.
     08-06 (1400) -  Documentation:  Updated 'TP-Link SmartThings Implementation'
 
-Objectives of Cloud Beta:
-
-    1.  Verify that all devices install appropriatly.  Open:  LB110. NEED USER INPUT!
-    2.  Determine actual Token life-span (done on my local copy) and update as required.
-        (Currently 17 days.)
-    3.  Improve error handling techniques.
-    4.  Capture miscellaneous errors.  NEED USER INPUT!
+Objectives of Cloud Beta.  Consider closed.  Currently at 25 days on same token.  Will continue to capture and correct errors on final release.
 
 # TP-Link Devices Supported:
 
