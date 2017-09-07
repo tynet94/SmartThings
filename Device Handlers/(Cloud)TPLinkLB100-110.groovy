@@ -162,3 +162,9 @@ private sendCmdtoServer(command, action){
 			log.info "Interface Error.  See SmartApp and Device error message."
 	}
 }
+
+//	----- CHILD / PARENT INTERCHANGE TASKS -----
+def syncAppServerUrl(newAppServerUrl) {
+	updateDataValue("appServerUrl", newAppServerUrl)
+	    log.info "Updated appServerUrl for ${device.name} ${device.label}"
+}

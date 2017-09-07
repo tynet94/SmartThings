@@ -1,32 +1,25 @@
 /*
 (BETA) TP-Link LB110 with Energy Monitor Cloud-connect Device Handler
-
 Copyright 2017 Dave Gutheinz
-
 Licensed under the Apache License, Version 2.0 (the "License"); you 
 may not use this  file except in compliance with the License. You may 
 obtain a copy of the License at:
-
 		http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software 
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
 implied. See the License for the specific language governing 
 permissions and limitations under the License.
-
 ##### Discalimer:  This Service Manager and the associated Device 
 Handlers are in no way sanctioned or supported by TP-Link.  All  
 development is based upon open-source data on the TP-Link devices; 
 primarily various users on GitHub.com.
-
 ##### Notes #####
 1.	This DH is a child device to 'beta' 'TP-Link Connect'.
 2.	This device handler supports the TP-Link LB110 with Energy 
 	Monitor functions.
 3.	Please direct comments to the SmartThings community thread 
 	'Cloud TP-Link Device SmartThings Integration'.
-
 ##### History #####
 07-26-2017	-	Initial Prototype Release
 07-28-2017	-	Added uninstalled() to Service Manager to delete 
@@ -347,4 +340,10 @@ private sendCmdtoServer(command, action){
 		default:
 			log.info "Interface Error.  See SmartApp and Device error message."
 	}
+}
+
+//	----- CHILD / PARENT INTERCHANGE TASKS -----
+def syncAppServerUrl(newAppServerUrl) {
+	updateDataValue("appServerUrl", newAppServerUrl)
+	    log.info "Updated appServerUrl for ${device.name} ${device.label}"
 }

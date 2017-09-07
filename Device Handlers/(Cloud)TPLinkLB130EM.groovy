@@ -28,15 +28,16 @@ primarily various users on GitHub.com.
 	'Cloud TP-Link Device SmartThings Integration'.
 
 ##### History #####
-07-26-2017	-	Initial Prototype Release
-07-28-2017	-	Added uninstalled() to Service Manager to delete 
+07-26	-	Initial Prototype Release
+07-28	-	Added uninstalled() to Service Manager to delete 
 			device
-07-28-2017	-	Beta Release
-08-01-2017	-	Updated mode tile to always display circadian, turn 
+07-28	-	Beta Release
+08-01	-	Updated mode tile to always display circadian, turn 
 			color when circadian.
-08-06-2017	-	Editorial changes.  Added annotations for device 
+08-06	-	Editorial changes.  Added annotations for device 
 			applicability to LB130 EM - the master for other LB 
 			device handlers.
+08-23	-	1.  Added appServerUrl sync with Service Manager.
 */
 
 metadata {
@@ -405,4 +406,10 @@ private sendCmdtoServer(command, action){
 		default:
 			log.info "Interface Error.  See SmartApp and Device error message."
 	}
+}
+
+//	----- CHILD / PARENT INTERCHANGE TASKS -----
+def syncAppServerUrl(newAppServerUrl) {
+	updateDataValue("appServerUrl", newAppServerUrl)
+	    log.info "Updated appServerUrl for ${device.name} ${device.label}"
 }
