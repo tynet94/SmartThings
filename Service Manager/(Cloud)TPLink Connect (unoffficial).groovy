@@ -1,12 +1,16 @@
 /*
-(BETA) TP-Link (unofficial) Connect Service Manager
+TP-Link (unofficial) Connect Service Manager
+
 Copyright 2017 Dave Gutheinz
+
 Licensed under the Apache License, Version 2.0 (the "License"); you 
-may not use this file except in compliance with the License. You may 
+may not use this  file except in compliance with the License. You may 
 obtain a copy of the License at:
+
 		http://www.apache.org/licenses/LICENSE-2.0
+
 Unless required by applicable law or agreed to in writing, software 
-distributed under  the License is distributed on an "AS IS" BASIS, 
+distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
 implied. See the License for the specific language governing 
 permissions and limitations under the License.
@@ -23,25 +27,7 @@ primarily various users on GitHub.com.
 	'Cloud TP-Link Device SmartThings Integration'.
 
 ##### History #####
-07-28	-	Beta Release
-08-01	-	Modified and tested error condition logic.  Updated on-
-		screen messages.
-08-04	-	Updated checkToken to check for expired token msg.
-08-07	-	Fixed error in Token Update that causes crash on install.
-08-09	-	Ch1. Added logic to limit number of times to automatically
-		update Token to three (then user must intervene).
-		Ch2.  Move nulling of current error to after successful 
-		communications.
-		Ch3.  Correct typo.
-		Ch5.  Added temp debug logging in Get Devices and Add 
-		Devices
-08-09	-	ERROR CORRECTION.  Corrected error in addDevices where
-		I type "LB110-LB110" instead of "LB100-LB110", causing
-		the device to not install.
-08-23	1.	Added syncAppServerUrl to Device Handlers.
-		2.	Update appServerURL each time getDevice is executed.
-09-04	1.	Changed automatic token update: every Wednesday at 0230.
-		2.	Updated checkError processing.
+2017-09-11	Initial formal release
 */
 
 definition(
@@ -343,14 +329,6 @@ def initialize() {
 
 //	----- PERIODIC CLOUD MX TASKS -----
 def checkError() {
-//	1.	Check if there is an error (state.currentError).  If none, then exit.
-//	2.	Increment error counter.
-//	3.	Limit error correction to 5 consecutive and for "token expired"
-//	4.	Run getDevices.  Will update appServerUrl is successful.
-//	5.	If getDevices failed, run getToken then getDevices.
-//	6.	If getToken is successful, getDevices to update appServerUrl
-//	7.  If failed, exit with message and wait for next attempt
-//	8.	For non-'token expired' error, log residual error.
 	if (state.currentError == null) {
     	log.info "TP-Link Connect did not have any set errors."
         return
