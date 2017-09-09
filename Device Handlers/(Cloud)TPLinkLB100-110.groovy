@@ -1,5 +1,5 @@
 /*
-(BETA) TP-Link LB100 and LB110 Cloud-connect Device Handler
+TP-Link LB100 and LB110 Cloud-connect Device Handler
 
 Copyright 2017 Dave Gutheinz
 
@@ -21,22 +21,16 @@ development is based upon open-source data on the TP-Link devices;
 primarily various users on GitHub.com.
 
 ##### Notes #####
-1.	This DH is a child device to 'beta' 'TP-Link Connect'.
+1.	This DH is a child device to 'TP-Link Connect'.
 2.	This device handler supports the TP-Link LB100 and LB110  
 	functions.
 3.	Please direct comments to the SmartThings community thread 
 	'Cloud TP-Link Device SmartThings Integration'.
 
 ##### History #####
-07-26-2017	-	Initial Prototype Release
-07-28-2017	-	Added uninstalled() to Service Manager to delete 
-			device
-07-28-2017	-	Beta Release
-08-01-2017	-	Updated mode tile to always display circadian, turn 
-			color when circadian.
-08-06-2017	-	Editorial changes.  Added annotations for device 
-			applicability to LB130 EM - the master for other LB 
-			device handlers.
+2017-09-11	Initial formal release.
+2017-09-06	Made refresh rate a preference and coded for default
+			to be every 30 minutes.
 */
 
 metadata {
@@ -72,6 +66,14 @@ metadata {
 		main("switch")
 		details("switch", "refresh")
 	}
+	def rates = [:]
+	rates << ["5" : "Refresh every 5 minutes"]
+	rates << ["10" : "Refresh every 10 minutes"]	
+	rates << ["15" : "Refresh every 15 minutes"]
+	rates << ["30" : "Refresh every 30 minutes"]
+	preferences {
+		input name: "refreshRate", type: "enum", title: "Refresh Rate", options: rates, description: "Select Refresh Rate", required: false
+	}
 }
 
 def installed() {
@@ -80,7 +82,23 @@ def installed() {
 
 def updated() {
 	unschedule()
-	runEvery15Minutes(refresh)
+	switch(refreshRate) {
+		case "5":
+			runEvery5Minutes(refresh)
+			log.info "Refresh Scheduled for every 5 minutes"
+			break
+		case "10":
+			runEvery10Minutes(refresh)
+			log.info "Refresh Scheduled for every 10 minutes"
+			break
+		case "15":
+			runEvery15Minutes(refresh)
+			log.info "Refresh Scheduled for every 15 minutes"
+			break
+		default:
+			runEvery30Minutes(refresh)
+			log.info "Refresh Scheduled for every 30 minutes"
+	}
 	runIn(2, refresh)
 }
 
@@ -166,5 +184,5 @@ private sendCmdtoServer(command, action){
 //	----- CHILD / PARENT INTERCHANGE TASKS -----
 def syncAppServerUrl(newAppServerUrl) {
 	updateDataValue("appServerUrl", newAppServerUrl)
-	    log.info "Updated appServerUrl for ${device.name} ${device.label}"
+		log.info "Updated appServerUrl for ${device.name} ${device.label}"
 }

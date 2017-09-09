@@ -1,19 +1,25 @@
 /*
-(BETA) TP-Link LB110 with Energy Monitor Cloud-connect Device Handler
+TP-Link LB110 with Energy Monitor Cloud-connect Device Handler
+
 Copyright 2017 Dave Gutheinz
+
 Licensed under the Apache License, Version 2.0 (the "License"); you 
 may not use this  file except in compliance with the License. You may 
 obtain a copy of the License at:
+
 		http://www.apache.org/licenses/LICENSE-2.0
+
 Unless required by applicable law or agreed to in writing, software 
 distributed under the License is distributed on an "AS IS" BASIS, 
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
 implied. See the License for the specific language governing 
 permissions and limitations under the License.
+
 ##### Discalimer:  This Service Manager and the associated Device 
 Handlers are in no way sanctioned or supported by TP-Link.  All  
 development is based upon open-source data on the TP-Link devices; 
 primarily various users on GitHub.com.
+
 ##### Notes #####
 1.	This DH is a child device to 'beta' 'TP-Link Connect'.
 2.	This device handler supports the TP-Link LB110 with Energy 
@@ -21,15 +27,9 @@ primarily various users on GitHub.com.
 3.	Please direct comments to the SmartThings community thread 
 	'Cloud TP-Link Device SmartThings Integration'.
 ##### History #####
-07-26-2017	-	Initial Prototype Release
-07-28-2017	-	Added uninstalled() to Service Manager to delete 
-			device
-07-28-2017	-	Beta Release
-08-01-2017	-	Updated mode tile to always display circadian, turn 
-			color when circadian.
-08-06-2017	-	Editorial changes.  Added annotations for device 
-			applicability to LB130 EM - the master for other LB 
-			device handlers.
+2017-09-11	Initial formal release.
+2017-09-06	Made refresh rate a preference and coded for default
+			to be every 30 minutes.
 */
 
 metadata {
@@ -39,7 +39,6 @@ metadata {
 		capability "Sensor"
 		capability "Actuator"
 		capability "refresh"
-//	ENERGY MONITOR
 		capability "powerMeter"
 		command "setCurrentDate"
 		attribute "monthTotalE", "string"
@@ -71,7 +70,6 @@ metadata {
 		standardTile("refresh", "capability.refresh", width: 2, height: 2,  decoration: "flat") {
 			state ("default", label:"Refresh", action:"refresh.refresh", icon:"st.secondary.refresh")
 		}		 
-//	ENERGY MONITOR TO ###
 		standardTile("blankTile", "", width: 2, height: 2,  decoration: "flat") {
 			state ("", label:"")
 		}	 
@@ -96,9 +94,16 @@ metadata {
 		valueTile("weekAverage", "device.weekAvgE", decoration: "flat", height: 1, width: 2) {
 			state "weekAvgE", label: '7 Day Avg\n\r ${currentValue} KWH'
 		}
-//	###
 		main("switch")
 		details("switch", "refresh" ,"blankTile", "refreshStats", "power", "weekTotal", "monthTotal", "engrToday", "weekAverage", "monthAverage")
+	}
+	def rates = [:]
+	rates << ["5" : "Refresh every 5 minutes"]
+	rates << ["10" : "Refresh every 10 minutes"]	
+	rates << ["15" : "Refresh every 15 minutes"]
+	rates << ["30" : "Refresh every 30 minutes"]
+	preferences {
+		input name: "refreshRate", type: "enum", title: "Refresh Rate", options: rates, description: "Select Refresh Rate", required: false
 	}
 }
 
@@ -108,12 +113,26 @@ def installed() {
 
 def updated() {
 	unschedule()
-	runEvery15Minutes(refresh)
+	switch(refreshRate) {
+		case "5":
+			runEvery5Minutes(refresh)
+			log.info "Refresh Scheduled for every 5 minutes"
+			break
+		case "10":
+			runEvery10Minutes(refresh)
+			log.info "Refresh Scheduled for every 10 minutes"
+			break
+		case "15":
+			runEvery15Minutes(refresh)
+			log.info "Refresh Scheduled for every 15 minutes"
+			break
+		default:
+			runEvery30Minutes(refresh)
+			log.info "Refresh Scheduled for every 30 minutes"
+	}
 	runIn(2, refresh)
-//	ENERGY MONITOR
 	schedule("0 30 0 * * ?", setCurrentDate)
 	runIn(6, setCurrentDate)
-//	###
 }
 
 void uninstalled() {
@@ -164,11 +183,9 @@ def parseStatus(status){
 	log.info "$device.name $device.label: Power: ${onOff} / Brightness: ${level}%"
 	sendEvent(name: "switch", value: onOff)
 	sendEvent(name: "level", value: level)
-//	ENERGY MONITOR
 	getEngeryMeter()
 }
 
-//	ENERGY MONITOR TO #######
 //	----- Get Current Energy Use Rate ----------------------------
 def getEngeryMeter(){
 	sendCmdtoServer('{"smartlife.iot.common.emeter":{"get_realtime":{}}}', "energyMeterResponse")
@@ -293,7 +310,6 @@ def getDateData(){
 	state.monthToday = getDataValue("monthToday") as int
 	state.yearToday = getDataValue("yearToday") as int
 }
-//	#######
 
 //	----- Send the Command to the Bridge -------------------------
 private sendCmdtoServer(command, action){
@@ -319,7 +335,6 @@ private sendCmdtoServer(command, action){
 			refreshResponse(cmdResponse)
 			break
 
-//	ENERGY MONITOR TO #######
 		case "energyMeterResponse":
 			energyMeterResponse(cmdResponse)
 			break
@@ -335,7 +350,6 @@ private sendCmdtoServer(command, action){
 		case "engrStatsResponse":
 			engrStatsResponse(cmdResponse)
 			break
-//	#######
 			
 		default:
 			log.info "Interface Error.  See SmartApp and Device error message."
@@ -345,5 +359,5 @@ private sendCmdtoServer(command, action){
 //	----- CHILD / PARENT INTERCHANGE TASKS -----
 def syncAppServerUrl(newAppServerUrl) {
 	updateDataValue("appServerUrl", newAppServerUrl)
-	    log.info "Updated appServerUrl for ${device.name} ${device.label}"
+		log.info "Updated appServerUrl for ${device.name} ${device.label}"
 }

@@ -21,20 +21,16 @@ development is based upon open-source data on the TP-Link devices;
 primarily various users on GitHub.com.
 
 ##### Notes #####
-1.	This DH is a child device to 'beta' 'TP-Link Connect'.
+1.	This DH is a child device to 'TP-Link Connect'.
 2.	This device handler supports the TP-Link HS110 with Energy 
 	Monitor functions.
 3.	Please direct comments to the SmartThings community thread 
 	'Cloud TP-Link Device SmartThings Integration'.
 
 ##### History #####
-07-26-2017	-	Initial Prototype Release
-07-28-2017	-	Added uninstalled() to Service Manager to delete 
-			device
-07-28-2017	-	Beta Release
-08-06-2017	-	Editorial changes.  Added annotations for device 
-			applicability to LB130 EM - the master for other LB 
-			device handlers.
+2017-09-11	Initial formal release.
+2017-09-06	Made refresh rate a preference and coded for default
+			to be every 30 minutes.
 */
 
 metadata {
@@ -44,7 +40,6 @@ metadata {
 		capability "polling"
 		capability "Sensor"
 		capability "Actuator"
-//	ENERGY MONITOR
 		capability "powerMeter"
 		command "setCurrentDate"
 		attribute "monthTotalE", "string"
@@ -53,7 +48,6 @@ metadata {
 		attribute "weekAvgE", "string"
 		attribute "engrToday", "string"
 		attribute "dateUpdate", "string"
-//	#######
 	}
 	tiles(scale: 2) {
 		multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, canChangeIcon: true){
@@ -74,7 +68,6 @@ metadata {
 		standardTile("refresh", "capability.refresh", width: 2, height: 2,  decoration: "flat") {
 			state ("default", label:"Refresh", action:"refresh.refresh", icon:"st.secondary.refresh")
 		}		 
-//	ENERGY MONITOR
 		standardTile("blankTile", "", width: 2, height: 2,  decoration: "flat") {
 			state ("", label:"")
 		}	 
@@ -99,11 +92,15 @@ metadata {
 		valueTile("weekAverage", "device.weekAvgE", decoration: "flat", height: 1, width: 2) {
 			state "weekAvgE", label: '7 Day Avg\n\r ${currentValue} KWH'
 		}
-//	#######
-		
-		main("switch")
-//				|-------ALL-------|  |------------------------ENERGY MONITOR-------------------------------------------------------------------|
 		details("switch", "refresh" ,"blankTile", "refreshStats", "power", "weekTotal", "monthTotal", "engrToday", "weekAverage", "monthAverage")
+	}
+	def rates = [:]
+	rates << ["5" : "Refresh every 5 minutes"]
+	rates << ["10" : "Refresh every 10 minutes"]	
+	rates << ["15" : "Refresh every 15 minutes"]
+	rates << ["30" : "Refresh every 30 minutes"]
+	preferences {
+		input name: "refreshRate", type: "enum", title: "Refresh Rate", options: rates, description: "Select Refresh Rate", required: false
 	}
 }
 
@@ -113,12 +110,26 @@ def installed() {
 
 def updated() {
 	unschedule()
-	runEvery15Minutes(refresh)
+	switch(refreshRate) {
+		case "5":
+			runEvery5Minutes(refresh)
+			log.info "Refresh Scheduled for every 5 minutes"
+			break
+		case "10":
+			runEvery10Minutes(refresh)
+			log.info "Refresh Scheduled for every 10 minutes"
+			break
+		case "15":
+			runEvery15Minutes(refresh)
+			log.info "Refresh Scheduled for every 15 minutes"
+			break
+		default:
+			runEvery30Minutes(refresh)
+			log.info "Refresh Scheduled for every 30 minutes"
+	}
 	runIn(2, refresh)
-//	ENERGY MONITOR
 	schedule("0 30 0 * * ?", setCurrentDate)
 	runIn(6, setCurrentDate)
-//	#######
 }
 
 void uninstalled() {
@@ -154,11 +165,9 @@ def refreshResponse(cmdResponse){
 	}
 	log.info "${device.name} ${device.label}: Power: ${status}"
 	sendEvent(name: "switch", value: status, isStateChange: true)
-//	ENERGY MONITOR
 	getEngeryMeter()
 }
 
-//	ENERGY MONITOR
 //	----- Get Current Energy Use Rate ----------------------------
 def getEngeryMeter(){
 	sendCmdtoServer('{"emeter":{"get_realtime":{}}}', "energyMeterResponse")
@@ -295,7 +304,6 @@ def getDateData(){
 	state.monthToday = getDataValue("monthToday") as int
 	state.yearToday = getDataValue("yearToday") as int
 }
-//	#######
 
 //	----- SEND COMMAND TO CLOUD VIA SM -----
 private sendCmdtoServer(command, action){
@@ -321,7 +329,6 @@ private sendCmdtoServer(command, action){
 			refreshResponse(cmdResponse)
 			break
 
-//	ENERGY MONITOR
 		case "energyMeterResponse":
 			energyMeterResponse(cmdResponse)
 			break
@@ -337,7 +344,6 @@ private sendCmdtoServer(command, action){
 		case "engrStatsResponse":
 			engrStatsResponse(cmdResponse)
 			break
-//	#######
 			
 		default:
 			log.debug "at default"
@@ -347,5 +353,5 @@ private sendCmdtoServer(command, action){
 //	----- CHILD / PARENT INTERCHANGE TASKS -----
 def syncAppServerUrl(newAppServerUrl) {
 	updateDataValue("appServerUrl", newAppServerUrl)
-	    log.info "Updated appServerUrl for ${device.name} ${device.label}"
+		log.info "Updated appServerUrl for ${device.name} ${device.label}"
 }

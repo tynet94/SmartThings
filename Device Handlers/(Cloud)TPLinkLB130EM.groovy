@@ -1,5 +1,5 @@
 /*
-(BETA) TP-Link LB130 with Energy Monitor Cloud-connect Device Handler
+TP-Link LB130 with Energy Monitor Cloud-connect Device Handler
 
 Copyright 2017 Dave Gutheinz
 
@@ -21,23 +21,16 @@ development is based upon open-source data on the TP-Link devices;
 primarily various users on GitHub.com.
 
 ##### Notes #####
-1.	This DH is a child device to 'beta' 'TP-Link Connect'.
+1.	This DH is a child device to 'TP-Link Connect'.
 2.	This device handler supports the TP-Link LB130 with Energy 
 	Monitor functions.
 3.	Please direct comments to the SmartThings community thread 
 	'Cloud TP-Link Device SmartThings Integration'.
 
 ##### History #####
-07-26	-	Initial Prototype Release
-07-28	-	Added uninstalled() to Service Manager to delete 
-			device
-07-28	-	Beta Release
-08-01	-	Updated mode tile to always display circadian, turn 
-			color when circadian.
-08-06	-	Editorial changes.  Added annotations for device 
-			applicability to LB130 EM - the master for other LB 
-			device handlers.
-08-23	-	1.  Added appServerUrl sync with Service Manager.
+2017-09-11	Initial formal release.
+2017-09-06	Made refresh rate a preference and coded for default
+			to be every 30 minutes.
 */
 
 metadata {
@@ -47,14 +40,11 @@ metadata {
 		capability "Sensor"
 		capability "Actuator"
 		capability "refresh"
-//	LB120 / LB130
 		capability "Color Temperature"
 		attribute "bulbMode", "string"
 		command "setModeNormal"
 		command "setModeCircadian"
-//	LB130
 		capability "Color Control"
-//	ENERGY MONITOR
 		capability "powerMeter"
 		command "setCurrentDate"
 		attribute "monthTotalE", "string"
@@ -82,7 +72,6 @@ metadata {
 			tileAttribute ("device.level", key: "SLIDER_CONTROL") {
 				attributeState "level", label: "Brightness: ${currentValue}", action:"switch level.setLevel"
 			}
-//	LB130
 			tileAttribute ("device.color", key: "COLOR_CONTROL") {
 				attributeState "color", action:"setColor"
 			}
@@ -90,7 +79,6 @@ metadata {
 		standardTile("refresh", "capability.refresh", width: 2, height: 2,  decoration: "flat") {
 			state ("default", label:"Refresh", action:"refresh.refresh", icon:"st.secondary.refresh")
 		}		 
-//	LB120 (RANGE = 2700 - 6500) / LB130 (RANGE = 2500 - 9000)
 		controlTile("colorTempSliderControl", "device.colorTemperature", "slider", width: 4, height: 1, inactiveLabel: false,
 		range:"(2500..9000)") {
 			state "colorTemperature", action:"color temperature.setColorTemperature"
@@ -102,7 +90,6 @@ metadata {
 			state "normal", label:'Circadian', action:"setModeCircadian", backgroundColor:"#ffffff", nextState: "circadian"
 			state "circadian", label:'Circadian', action:"setModeNormal", backgroundColor:"#00a0dc", nextState: "normal"
 		}
-//	ENERGY MONITOR TO ###
 		standardTile("refreshStats", "Refresh Statistics", width: 2, height: 2,  decoration: "flat") {
 			state ("refreshStats", label:"Refresh Stats", action:"setCurrentDate", icon:"st.secondary.refresh")
 		}		 
@@ -124,11 +111,17 @@ metadata {
 		valueTile("weekAverage", "device.weekAvgE", decoration: "flat", height: 1, width: 2) {
 			state "weekAvgE", label: '7 Day Avg\n\r ${currentValue} KWH'
 		}
-//	###
 		main("switch")
-//				|-ALL--|  |--------------------LB120/LB130----------------|  |--ALL--|  |-----------------------ENERGY MONITOR-------------------------------------------------------|
 		details("switch", "colorTempSliderControl", "colorTemp", "bulbMode", "refresh" ,"refreshStats", "power", "weekTotal", "monthTotal", "engrToday", "weekAverage", "monthAverage")
 	}
+	def rates = [:]
+    rates << ["5" : "Refresh every 5 minutes"]
+    rates << ["10" : "Refresh every 10 minutes"]	
+    rates << ["15" : "Refresh every 15 minutes"]
+    rates << ["30" : "Refresh every 30 minutes"]
+	preferences {
+        input name: "refreshRate", type: "enum", title: "Refresh Rate", options: rates, description: "Select Refresh Rate", required: false
+    }
 }
 
 def installed() {
@@ -137,12 +130,26 @@ def installed() {
 
 def updated() {
 	unschedule()
-	runEvery15Minutes(refresh)
+	switch(refreshRate) {
+		case "5":
+			runEvery5Minutes(refresh)
+            log.info "Refresh Scheduled for every 5 minutes"
+			break
+		case "10":
+			runEvery10Minutes(refresh)
+            log.info "Refresh Scheduled for every 10 minutes"
+			break
+		case "15":
+			runEvery15Minutes(refresh)
+            log.info "Refresh Scheduled for every 15 minutes"
+			break
+		default:
+			runEvery30Minutes(refresh)
+            log.info "Refresh Scheduled for every 30 minutes"
+	}
 	runIn(2, refresh)
-//	ENERGY MONITOR
-	schedule("0 30 0 * * ?", setCurrentDate)
+    schedule("0 30 0 * * ?", setCurrentDate)
 	runIn(6, setCurrentDate)
-//	###
 }
 
 void uninstalled() {
@@ -165,7 +172,6 @@ def setLevel(percentage) {
 	sendCmdtoServer("""{"smartlife.iot.smartbulb.lightingservice":{"transition_light_state":{"ignore_default":1,"on_off":1,"brightness":${percentage}}}}""", "commandResponse")
 }
 
-//	LB120 / LB130
 def setColorTemperature(kelvin) {
 	kelvin = kelvin as int
 	sendCmdtoServer("""{"smartlife.iot.smartbulb.lightingservice":{"transition_light_state":{"ignore_default":1,"on_off":1,"color_temp": ${kelvin},"hue":0,"saturation":0}}}""", "commandResponse")
@@ -178,15 +184,12 @@ def setModeNormal() {
 def setModeCircadian() {
 	sendCmdtoServer("""{"smartlife.iot.smartbulb.lightingservice":{"transition_light_state":{"mode":"circadian"}}}""", "commandResponse")
 }
-//	###
 
-//	LB130
 def setColor(Map color) {
 	def hue = color.hue * 3.6 as int
 	def saturation = color.saturation as int
 	sendCmdtoServer("""{"smartlife.iot.smartbulb.lightingservice":{"transition_light_state":{"ignore_default":1,"on_off":1,"color_temp":0,"hue":${hue},"saturation":${saturation}}}}""", "commandResponse")
 }
-//	###
 
 def commandResponse(cmdResponse){
 	def status =  cmdResponse["smartlife.iot.smartbulb.lightingservice"]["transition_light_state"]
@@ -213,28 +216,21 @@ def parseStatus(status){
 		status = status.dft_on_state
 	}
 	def level = status.brightness
-//	LB120 / LB130
 	def mode = status.mode
 	def color_temp = status.color_temp
-//	LB130
 	def hue = status.hue
 	def saturation = status.saturation
-//																				 |------LB120/LB130--------------------------| |----------LB130------------------------|
 	log.info "$device.name $device.label: Power: ${onOff} / Brightness: ${level}% / Mode: ${mode} / Color Temp: ${color_temp}K / Hue: ${hue} / Saturation: ${saturation}"
 	sendEvent(name: "switch", value: onOff)
 	sendEvent(name: "level", value: level)
-//	LB120 / LB130
 	sendEvent(name: "bulbMode", value: mode)
 	sendEvent(name: "colorTemperature", value: color_temp)
-//	LB130
 	sendEvent(name: "hue", value: hue)
 	sendEvent(name: "saturation", value: saturation)
 	sendEvent(name: "color", value: colorUtil.hslToHex(hue/3.6 as int, saturation as int))
-//	ENERGY MONITOR
 	getEngeryMeter()
 }
 
-//	ENERGY MONITOR TO #######
 //	----- Get Current Energy Use Rate ----------------------------
 def getEngeryMeter(){
 	sendCmdtoServer('{"smartlife.iot.common.emeter":{"get_realtime":{}}}', "energyMeterResponse")
@@ -359,7 +355,6 @@ def getDateData(){
 	state.monthToday = getDataValue("monthToday") as int
 	state.yearToday = getDataValue("yearToday") as int
 }
-//	#######
 
 //	----- Send the Command to the Bridge -------------------------
 private sendCmdtoServer(command, action){
@@ -385,7 +380,6 @@ private sendCmdtoServer(command, action){
 			refreshResponse(cmdResponse)
 			break
 
-//	ENERGY MONITOR TO #######
 		case "energyMeterResponse":
 			energyMeterResponse(cmdResponse)
 			break
@@ -401,7 +395,6 @@ private sendCmdtoServer(command, action){
 		case "engrStatsResponse":
 			engrStatsResponse(cmdResponse)
 			break
-//	#######
 			
 		default:
 			log.info "Interface Error.  See SmartApp and Device error message."
