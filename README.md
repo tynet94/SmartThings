@@ -30,25 +30,6 @@ Installation instruction can be found:
     a.  Top-level in the document 'Cloud TP-Link to SmartThing Installation.pdf'.
     b.  In the README.md file in the 'Service Manager' and 'Device Handlers' folders.
 
-# Cloud Beta Updates and Objectives
-    UPDATES (Dallas, Texas USA times uploaded to GitHub)
-    PLANNED 09-11   Convert to final version of all.  Will save existing beta files in a sub-directory.
-                    No significant changes from this Beta are planned, so reinstallation is not
-                    required.
-    09-04 (0930) -  Update Service Manager
-                    a.  error checking logic expanded.
-                    b.  Automatic Token schedule to once per week. 
-    08-09 (1330) -  CRITICAL.  Updated Service Manager (addDevices) to correct typo causing failure
-                    to install of LB110 bulbs.
-    08-09 (0700) -  Minor.  Updated Service Manager for additional logging and limiting the automatic
-                    getToken to three times w/o user intervention.  Updated Installation Instructions
-                    to ask user to open logging and copy log if there are errors on install.
-    08-07 (0600) -  CRITICAL.  Fixed Service Manager code eliminating error causing installation crash.
-                    was only the Service Manager loaded 08-07 (1600).
-    08-06 (1600) -  Minor.  Varions fixes to error handling and messaging within Device Handlers and
-                    Service Manager.
-    08-06 (1400) -  Documentation:  Updated 'TP-Link SmartThings Implementation'
-
 Objectives of Cloud Beta.  Consider closed.  Currently at 25 days on same token.  Will continue to capture and correct errors on final release.
 
 # TP-Link Devices Supported:
