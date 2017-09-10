@@ -1,10 +1,10 @@
 <img src="https://github.com/DaveGut/Cloud-Based_TP-Link-to-SmartThings-Integration/blob/master/FamilyPic.png" align="right"/>
 
-# Cloud-Based TP-Link Bulb, Plug, and Switch to SmartThing Integration - BETA
+# Cloud-Based TP-Link Bulb, Plug, and Switch to SmartThing Integration
 
 Two versions of TP-Link to Smart Things Integraion now exist:
 
-a. Cloud-Based TP-Link to Smart Things Integraion: This new version (currently in Beta) that relies on the TP-Link Kasa cloud. Attributes:
+a. Cloud-Based TP-Link to Smart Things Integraion: This new version that relies on the TP-Link Kasa cloud. Attributes:
 
     Reliant on TP-Link cloud (and the continued availabilty of same).
     Must have TP-Link account.
