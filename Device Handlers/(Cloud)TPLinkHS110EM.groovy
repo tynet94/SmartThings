@@ -31,6 +31,7 @@ primarily various users on GitHub.com.
 2017-09-11	Initial formal release.
 2017-09-06	Made refresh rate a preference and coded for default
 			to be every 30 minutes.
+2017-10-29	Removed event switch: waiting.
 */
 
 metadata {
@@ -153,7 +154,6 @@ def onOffResponse(cmdResponse){
 
 //	----- REFRESH ------------------------------------------------
 def refresh(){
-	sendEvent(name: "switch", value: "waiting", isStateChange: true)
 	sendCmdtoServer('{"system":{"get_sysinfo":{}}}', "refreshResponse")
 }
 def refreshResponse(cmdResponse){
@@ -164,7 +164,7 @@ def refreshResponse(cmdResponse){
 		status = "off"
 	}
 	log.info "${device.name} ${device.label}: Power: ${status}"
-	sendEvent(name: "switch", value: status, isStateChange: true)
+	sendEvent(name: "switch", value: status)
 	getEngeryMeter()
 }
 
