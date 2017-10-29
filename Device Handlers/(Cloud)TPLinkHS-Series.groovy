@@ -1,4 +1,4 @@
-*
+/*
 TP-Link HS-Series Cloud-connect Device Handler
 
 Copyright 2017 Dave Gutheinz
