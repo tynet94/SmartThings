@@ -183,6 +183,7 @@ def addDevices() {
 	tpLinkModel << ["LB110" : "TP-LinkLB100-110"]
 	tpLinkModel << ["LB120" : "TP-LinkLB120"]
 	tpLinkModel << ["LB130" : "TP-LinkLB130"]
+	tpLinkModel << ["LB230" : "TP-LinkLB130"]
 	def hub = location.hubs[0]
 	def hubId = hub.id
 	selectedDevices.each { dni ->
