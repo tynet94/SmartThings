@@ -35,14 +35,14 @@ Objectives of Cloud Beta.  Consider closed.  Currently at 25 days on same token.
 # TP-Link Devices Supported:
 
     HS100, Hs105, HS110, HS200 - (Cloud)TP-Link_HS_Series.groovy
-    LB100, LB110 - (Cloud)TP-Link_LB100_110.groovy
+    LB100, LB110, LB200 - (Cloud)TP-Link_LB100_110.groovy
     LB120 - (Cloud)TP-Link_LB120.groovy
-    LB130 - (Cloud)TP-Link_LB130.groovy
+    LB130, LB230 - (Cloud)TP-Link_LB130.groovy
     ENERGY MONITOR VARIANTS
     HS110 with energy monitor functions - (Cloud)TP-Link_HS110_Emeter.groovy
     LB110 with energy monitor functions - (Cloud)TP-Link_LB110_Emeter.groovy
     LB120 with energy monitor functions - (Cloud)TP-Link_LB120_Emeter.groovy
-    LB130 with energy monitor functions - (Cloud)TP-Link_LB130_Emeter.groovy
+    LB130, LB230 with energy monitor functions - (Cloud)TP-Link_LB130_Emeter.groovy
 
 Files:
 
