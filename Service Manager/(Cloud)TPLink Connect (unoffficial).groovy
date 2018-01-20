@@ -179,6 +179,7 @@ def addDevices() {
 	tpLinkModel << ["HS105" : "TP-LinkHS-Series"]
 	tpLinkModel << ["HS110" : "TP-LinkHS-Series"]
 	tpLinkModel << ["HS200" : "TP-LinkHS-Series"]
+	tpLinkModel << ["KP100" : "TP-LinkHS-Series"]
 	tpLinkModel << ["LB100" : "TP-LinkLB100-110"]
 	tpLinkModel << ["LB110" : "TP-LinkLB100-110"]
 	tpLinkModel << ["LB120" : "TP-LinkLB120"]
