@@ -1,5 +1,4 @@
 /*
-SPECIAL AUSTRALIAN VERSION
 TP-Link HS110 with Energy Monitor Cloud-connect Device Handler
 Copyright 2017 Dave Gutheinz
 Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -168,20 +167,35 @@ def getEngeryMeter(){
 }
 
 def energyMeterResponse(cmdResponse) {
-log.debug cmdResponse
 	if (cmdResponse["emeter"].err_code == -1) {
 		log.error "This DH Only Supports the HS110 plug"
-		sendEvent(name: "power", value: powerConsumption, descriptionText: "Bulb is not a HS110", isStateChange: true)
+		sendEvent(name: "power", value: powerConsumption, descriptionText: "Bulb is not a HS110")
 	} else {
 		def state = cmdResponse["emeter"]["get_realtime"]
-//		def powerConsumption = realtime.power / 1000		//	deleted
-		def power = state.power_mw.toInteger() / 1000		//	updated - format of file.
-        def engrToday = state.total_wh.toInteger()					//	need to validate giving proper value.
-		sendEvent(name: "power", value: power)
-		sendEvent(name: "engrToday", value: engrToday, isStateChange: true)
-		log.info "$device.name $device.label: Updated CurrentPower to ${power} and Today'sUsage to ${engrToday}"
-//		getUseToday()	//	Deleted.  New format has use today.
+		def powerConsumption = state.power_mw/1000
+		sendEvent(name: "power", value: powerConsumption)
+		log.info "$device.name $device.label: Updated CurrentPower to $powerConsumption"
+		getUseToday()
 	}
+}
+
+//	----- Get Today's Consumption --------------------------------
+def getUseToday(){
+	getDateData()
+	sendCmdtoServer("""{"emeter":{"get_daystat":{"month": ${state.monthToday}, "year": ${state.yearToday}}}}""", "useTodayResponse")
+}
+
+def useTodayResponse(cmdResponse) {
+	def engrToday
+	def dayList = cmdResponse["emeter"]["get_daystat"].day_list
+	for (int i = 0; i < dayList.size(); i++) {
+		def engrData = dayList[i]
+		if(engrData.day == state.dayToday) {
+			engrToday = engrData.energy_wh
+		}
+   }
+	sendEvent(name: "engrToday", value: engrToday)
+	log.info "$device.name $device.label: Updated Today's Usage to $engrToday"
 }
 
 //	----- Get Weekly and Monthly Stats ---------------------------
@@ -211,7 +225,6 @@ def getPrevMonth() {
 }
 
 def engrStatsResponse(cmdResponse) {
-log.debug cmdResponse
 	getDateData()
 	def monTotEnergy = state.monTotEnergy
 	def wkTotEnergy = state.wkTotEnergy
@@ -223,14 +236,10 @@ log.debug cmdResponse
 	def weekStart = weekEnd - 6
 	if (cmdResponse["emeter"].err_code == -1) {
 		log.error "This DH Only Supports the HS110 plug"
-		sendEvent(name: "monthTotalE", value: 0, descriptionText: "Bulb is not a HS110")
+		sendEvent(name: "monthTotalE", value: 0, descriptionText: "Bulb is not a HS110", isStateChange: true)
 	} else {
 		def dayList = cmdResponse["emeter"]["get_daystat"].day_list
-        if (daylist[0]) {		//	If new device, there will be no previous month data
-			def dataMonth = dayList[0].month
-        } else {
-        	return
-        }
+		def dataMonth = dayList[0].month
 		def currentMonth = state.monthToday
 		def addedDays = 0
 		if (currentMonth == dataMonth) {
@@ -239,15 +248,15 @@ log.debug cmdResponse
 			addedDays = 0
 		}
 		for (int i = 0; i < dayList.size(); i++) {
-			def energyData = dayList[i]
-			if(energyData.day == state.dayToday && energyData.month == state.monthToday) {
+			def engrData = dayList[i]
+			if(engrData.day == state.dayToday && engrData.month == state.monthToday) {
 				monTotDays -= 1
 			} else {
-				monTotEnergy += energyData.energy_wh.toInteger()	//	Modified
+				monTotEnergy += engrData.energy_wh
 			}
-			def adjustDay = energyData.day + addedDays
+			def adjustDay = engrData.day + addedDays
 			if (adjustDay <= weekEnd && adjustDay >= weekStart) {
-				wkTotEnergy += energyData.energy_wh.toInteger()	//	Modified
+				wkTotEnergy += engrData.energy_wh
 			}
 		}
 		monTotDays += dayList.size()
@@ -255,7 +264,9 @@ log.debug cmdResponse
 		state.monTotEnergy = monTotEnergy
 		state.wkTotEnergy = wkTotEnergy
 		log.info "$device.name $device.label: Updated 7 and 30 day energy consumption statistics"
-		def monAvgEnergy = Math.round(monTotEnergy/(monTotDays-1))/1000
+		wkTotEnergy = Math.round(1000*wkTotEnergy) / 1000
+		monTotEnergy = Math.round(1000*monTotEnergy) / 1000
+		def monAvgEnergy = Math.round(monTotEnergy/(monTotDays))/1000
 		def wkAvgEnergy = Math.round(wkTotEnergy/7)/1000
 		sendEvent(name: "monthTotalE", value: monTotEnergy/1000)
 		sendEvent(name: "monthAvgE", value: monAvgEnergy)
