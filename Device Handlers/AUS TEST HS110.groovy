@@ -174,8 +174,8 @@ def energyMeterResponse(cmdResponse) {
 	} else {
 		def state = cmdResponse["emeter"]["get_realtime"]
 //		def powerConsumption = realtime.power / 1000		//	deleted
-		def power = realtime.power_mw.toInteger() / 1000		//	updated - format of file.
-        def engrToday = realtime.total_wh.toInteger()					//	need to validate giving proper value.
+		def power = state.power_mw.toInteger() / 1000		//	updated - format of file.
+        	def engrToday = state.total_wh.toInteger()					//	need to validate giving proper value.
 		sendEvent(name: "power", value: power)
 		sendEvent(name: "engrToday", value: engrToday, isStateChange: true)
 		log.info "$device.name $device.label: Updated CurrentPower to ${power} and Today'sUsage to ${engrToday}"
@@ -256,11 +256,11 @@ def engrStatsResponse(cmdResponse) {
 			if(engrData.day == state.dayToday && engrData.month == state.monthToday) {
 				monTotDays -= 1
 			} else {
-				monTotEnergy += engrData.energy.toInteger()	//	Modified
+				monTotEnergy += engrData.energy_wh.toInteger()	//	Modified
 			}
 			def adjustDay = engrData.day + addedDays
 			if (adjustDay <= weekEnd && adjustDay >= weekStart) {
-				wkTotEnergy += engrData.energy.toInteger()	//	Modified
+				wkTotEnergy += engrData.energy_wh.toInteger()	//	Modified
 			}
 		}
 		monTotDays += dayList.size()
