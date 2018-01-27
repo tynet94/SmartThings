@@ -1,4 +1,5 @@
 /*
+UPDATED FOR AUS VERSION ONLY
 TP-Link HS110 with Energy Monitor Cloud-connect Device Handler
 Copyright 2017 Dave Gutheinz
 Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -34,7 +35,9 @@ metadata {
 		capability "polling"
 		capability "Sensor"
 		capability "Actuator"
-		capability "powerMeter"
+		capability "Power Meter"
+//	Added as part of exposing power commands
+        command "getPower"
 		command "setCurrentDate"
 		attribute "monthTotalE", "string"
 		attribute "monthAvgE", "string"
@@ -145,10 +148,21 @@ def onOffResponse(cmdResponse){
 	refresh()
 }
 
-//	----- REFRESH ------------------------------------------------
+//	----- REFRESH AND POLL ---------------------------------------
+
+//	Added as test command only.
+def poll() {
+//	Temporarily disable get_sysinfo for the testing.  Final version will refresh.
+//	sendCmdtoServer('{"system":{"get_sysinfo":{}}}', "deviceCommand", "refreshResponse")
+	getPower()
+}
+
 def refresh(){
 	sendCmdtoServer('{"system":{"get_sysinfo":{}}}', "refreshResponse")
+    runIn(2, getPower)
+    runIn(5, getConsumption)
 }
+
 def refreshResponse(cmdResponse){
 	def status = cmdResponse.system.get_sysinfo.relay_state
 	if (status == 1) {
@@ -158,11 +172,10 @@ def refreshResponse(cmdResponse){
 	}
 	log.info "${device.name} ${device.label}: Power: ${status}"
 	sendEvent(name: "switch", value: status)
-	getEngeryMeter()
 }
 
 //	----- Get Current Energy Use Rate ----------------------------
-def getEngeryMeter(){
+def getPower(){
 	sendCmdtoServer('{"emeter":{"get_realtime":{}}}', "energyMeterResponse")
 }
 
@@ -175,12 +188,11 @@ def energyMeterResponse(cmdResponse) {
 		def powerConsumption = state.power_mw/1000
 		sendEvent(name: "power", value: powerConsumption)
 		log.info "$device.name $device.label: Updated CurrentPower to $powerConsumption"
-		getUseToday()
 	}
 }
 
 //	----- Get Today's Consumption --------------------------------
-def getUseToday(){
+def getConsumption(){
 	getDateData()
 	sendCmdtoServer("""{"emeter":{"get_daystat":{"month": ${state.monthToday}, "year": ${state.yearToday}}}}""", "useTodayResponse")
 }
