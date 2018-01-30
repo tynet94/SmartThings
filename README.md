@@ -45,6 +45,7 @@ Files:
 
 # Files Device Handler Folder
 TP-Link Model:  FileName // Namespace/Name
+
 HS100, HS105, HS200, HS210, KP100:  (Cloud) TP-Link Plug-Switch.groovy // davegut - (Hub) TP-Link Plug-Switch
 
 HS110, HS115:  (Cloud) TP-Link EnergyMonitor Plug.groovy // davegut - (Hub) TP-Link EnergyMonitor Plug
@@ -64,4 +65,7 @@ LB130, L230, KB130:  (Cloud) TP-Link Color Bulb Emon .groovy // davegut - (Cloud
 # File in Service Manager Folder
 TPLink Cloud Connect V2.groovy // davegut - TP-Link Cloud Connect
 
+# Files in Documentation Folder
+Installation - Cloud TP-Link to SmartThing.pdf
 
+TP-Link SmartThing Implementation.pdf
