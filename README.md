@@ -16,6 +16,20 @@ b. Hub-Based TP-Link to Smart Things Integraion: The previous Hub-based version 
     Does not require a token captured from the TP-Link cloud.
     Manual device installation and setting static IP addresses.
 
+# Version 2 Update - 1/30/2018
+
+The Files have been updated to Version 2.  Changes from previous version
+
+a.  Added transition time of (user selectable) for bulb power-on and off.
+
+b.  Made Energy Monitor function compatible with the Australian version of the HS110 (HS110(AU).
+
+c.  Changed file naming to be function-based instead of product number based due to expanded TP-Link Product Base.
+
+d.  Changed naming convention to be compatible with SmartThings - GitHub integration.
+
+Upgrade recommendation:  Not needed unless you are adding products not supported with the previous version.
+
 # Cloud-Based Pre-requisites:
 
 a.  A valid TP-Link Kasa account (must have login name and password.
@@ -25,30 +39,29 @@ b.  TP-Link devices installed and in 'Remote Control' mode (done in Kasa App)
 Caveate:  The author is not associated with the company TP-Link except as an owner/consumer of their products.  All date used to create thes applets was garnered from public-domain data.
 
 # Installation
-Installation instruction can be found:
-
-    a.  Top-level in the document 'Cloud TP-Link to SmartThing Installation.pdf'.
-    b.  In the README.md file in the 'Service Manager' and 'Device Handlers' folders.
-
-Objectives of Cloud Beta.  Consider closed.  Currently at 25 days on same token.  Will continue to capture and correct errors on final release.
-
-# TP-Link Devices Supported:
-
-    HS100, Hs105, HS110, HS200 - (Cloud)TP-Link_HS_Series.groovy
-    LB100, LB110, LB200 - (Cloud)TP-Link_LB100_110.groovy
-    LB120 - (Cloud)TP-Link_LB120.groovy
-    LB130, LB230 - (Cloud)TP-Link_LB130.groovy
-    ENERGY MONITOR VARIANTS
-    HS110 with energy monitor functions - (Cloud)TP-Link_HS110_Emeter.groovy
-    LB110 with energy monitor functions - (Cloud)TP-Link_LB110_Emeter.groovy
-    LB120 with energy monitor functions - (Cloud)TP-Link_LB120_Emeter.groovy
-    LB130, LB230 with energy monitor functions - (Cloud)TP-Link_LB130_Emeter.groovy
+Installation instruction can be found in the Documentation Folders.
 
 Files:
 
-Service Manager.  The installation and communications application.
+# Files Device Handler Folder
+TP-Link Model:  FileName // Namespace/Name
+HS100, HS105, HS200, HS210, KP100:  (Cloud) TP-Link Plug-Switch.groovy // davegut - (Hub) TP-Link Plug-Switch
 
-Device Handlers. All SmartThings device handlers. Names are clear as to device applicability.
+HS110, HS115:  (Cloud) TP-Link EnergyMonitor Plug.groovy // davegut - (Hub) TP-Link EnergyMonitor Plug
+
+LB100, LB110, LB200, KB100:  (Cloud) TP-Link SoftWhite Bulb.groovy // davegut - (Cloud) TP-Link Softwhite Bulb
+
+LB120:  (Cloud) TP-Link TunableWhite Bulb.groovy // davegut - (Cloud) TP-LinkTunableWhite Bulb
+
+LB130, L230, KB130:  (Cloud) TP-Link Color Bulb.groovy // davegut - (Cloud) TP-Link Color Bulb
+
+LB110:  (Cloud) TP-Link SoftWhite Bulb Emon .groovy // davegut - (Cloud) TP-Link Softwhite Bulb Emon
+
+3LB120:  (Cloud) TP-Link TunableWhite Bulb Emon .groovy // davegut - (Cloud) TP-LinkTunableWhite Bulb Emon
+
+LB130, L230, KB130:  (Cloud) TP-Link Color Bulb Emon .groovy // davegut - (Cloud) TP-Link Color Bulb Emon
+
+# File in Service Manager Folder
+TPLink Cloud Connect V2.groovy // davegut - TP-Link Cloud Connect
 
 
-Documentation. Design Notes, and Interface description, TP-Link Cloud Error Codes.
