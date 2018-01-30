@@ -1,4 +1,4 @@
-# Cloud-Based TP-Link to Smart Things Integration - BETA
+# Cloud-Based TP-Link to Smart Things Integration
 
 This package is for the SmartThings integration of TP-Link bulbs and plugs through the TP-Link cloud.  Prerequisites:
 
@@ -70,24 +70,5 @@ D.  Upgrading to Energy Monitor Function for a device
     
     5)  Select 'UPDATE' at the bottom.
     
-# Included Files
-
-In the folder "Service Manager": (Cloud)TPLink Connect (unoffficial).groovy - Service Manager for installation and management of the device handlers.
-
-In the folder "Device Handlers":
-
-1.  (Cloud)TPLinkHS-Series.groovy - Device Handler for the TP-Link HS Series (HS100, HS105, HS110, HS200) plugs/switches.
-
-2.  (Cloud)TPLinkLB100-110.groovy - Device Handler for the TP-Link LB100 and LB110 bulbs.
-
-3.  (Cloud)TPLinkLB120.groovy - Device Handler for the TP-Link LB120 bulb.
-
-4.  (Cloud)TPLinkLB130.groovy - Device Handler for the TP-Link LB130 bulb
-
-5.  (Cloud)TPLinkHS110EM.groovy - Replacement DH for the HS110 with Energy Monitor (see instructions).
-
-6.  (Cloud)TPLinkLB110EM.groovy - Replacement DH for the LB110 with Energy Monitor (see instructions).
-
-7.  (Cloud)TPLinkLB120EM.groovy - Replacement DH for the LB120 with Energy Monitor (see instructions).
-
-8.  (Cloud)TPLinkLB130EM.groovy - Replacement DH for the LB130 with Energy Monitor (see instructions).
+    6)  From the phone app, go to settings (the gear icon) and select Save to initialize the energy monitor functions.
+    
