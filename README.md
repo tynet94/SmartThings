@@ -28,6 +28,11 @@ d.  Changed naming convention to be compatible with SmartThings - GitHub integra
 
 Upgrade recommendation:  Not needed unless you are adding products not supported with the previous version.
 
+2/172018 - Updated Energy Monitor device handlers to not process the entire previous month data.  Also, modified calculations to clean up logic and use Groovy date.
+
+# Known Issue:
+On March 1 (and 2) of standard years, the month total nergy data do not include the 2 days (1 day) days in January. The month average energy value is calculated using 28 days (29 days).
+
 # Cloud-Based Pre-requisites:
 
 a.  A valid TP-Link Kasa account (must have login name and password.
