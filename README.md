@@ -30,6 +30,8 @@ Upgrade recommendation:  Not needed unless you are adding products not supported
 
 2/10/2018 - Updated Energy Monitor device handlers to not process the entire previous month data.  Also, modified calculations to clean up logic and use Groovy date.
 
+4/26/2018 - Added HS220 Dimming Switch device handler and modified service manager to accommodate same.
+
 # Cloud-Based Pre-requisites:
 
 a.  A valid TP-Link Kasa account (must have login name and password.
