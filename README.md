@@ -14,23 +14,16 @@ b. Hub-Based TP-Link to Smart Things Integraion: The Hub-based version that requ
     Does not require a token captured from the TP-Link cloud.
     Manual device installation and setting static IP addresses.
 
-# Version 2 Update - 1/30/2018
+# Version 3 Update - 10/10/2018
 
-The Files have been updated to Version 2.  Changes from previous version
-
-a.  Added transition time of (user selectable) for bulb power-on and off.
-
-b.  Made Energy Monitor function compatible with the Australian version of the HS110 (HS110(AU)).
-
-c.  Changed file naming to be function-based instead of product number based due to expanded TP-Link Product Base.
-
-d.  Changed naming convention to be compatible with SmartThings - GitHub integration.
-
-Upgrade recommendation:  Not needed unless you are adding products not supported with the previous version.
-
-2/10/2018 - Updated Energy Monitor device handlers to not process the entire previous month data.  Also, modified calculations to clean up logic and use Groovy date.
-
-4/26/2018 - Added HS220 Dimming Switch device handler and modified service manager to accommodate same.
+The Files have been updated to Version 3 for device handlers only..  Change from previous version is support for the NEW SmartThings phone app.  Some nuances:
+a.  Initial Installation takes the Classic App.
+b.  The new SmartThings App does not all device deletion.  To do so, you must use the IDE or the Classic App.
+c.  The following functions are not supported on the new SmartThings App
+     1.  Circadian Mode for bulbs.
+     2.  Energy Monitor functions (data still available for picking if you write a smart app)
+     3.  Single Device Delete.
+     4.  Color Temperature above 6500 or below 2700 on the Color Bulbs.
 
 # Cloud-Based Pre-requisites:
 
@@ -40,7 +33,16 @@ b.  TP-Link devices installed and in 'Remote Control' mode (done in Kasa App)
 
 Caveate:  The author is not associated with the company TP-Link except as an owner/consumer of their products.  All date used to create thes applets was garnered from public-domain data.
 
-# Installation
+# Upgrade (Attempt several items)
+Update instructions:
+A.  Replace the device handlers with the new ones from the link below.
+B.  In the CLASSIC App, exercise each device (run a refresh).
+C.  Go to the NEW App and see if you can control the devices.
+D.  If not, Remove the devices using the IDE.  DO NOT remove the Smart App.  Then re-install using either the New or Classic App.
+Note:  To delete individual devices, you will have to use the My Devices page on the IDE or the CLASSIC app.  The new app can not delete.
+
+
+# Installation (Must use the SmartThings Classic App)
 Installation instruction can be found in the Documentation Folders.  These are step-by-step and are RECOMMENDED for users new to SmartThings.  Essentially, the steps are:
 
 a.  Install the relevant installation file(s) into My Device Handler page, then Save and Publish.  Devic File names::
